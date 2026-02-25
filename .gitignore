@@ -1,0 +1,11 @@
+# Sub-repos — managed independently
+hyadmin-api/
+hyadmin-ui/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

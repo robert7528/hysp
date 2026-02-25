@@ -1,0 +1,52 @@
+{
+  "project_name": "HySP",
+  "version": "1.0.0",
+
+  "build_command": "bun run build",
+  "test_command": "bun test && go test ./internal/... -cover",
+  "lint_command": "golangci-lint run ./... && bun x next lint",
+
+  "commands": {
+    "dev": {
+      "desc": "以 Bun 高性能模式啟動 Next.js 開發服務",
+      "command": "bun --bun next dev"
+    },
+    "podman-build": {
+      "desc": "使用 Podman 構建符合 OCI 規範的 Bun 鏡像",
+      "command": "podman build -t hysp-app:latest -f Containerfile ."
+    },
+    "podman-up": {
+      "desc": "使用 Podman Compose 啟動全棧環境 (Go + Bun + Postgres)",
+      "command": "podman-compose up -d"
+    },
+    "k8s-validate": {
+      "desc": "驗證 K8S YAML 配置與 Helm Chart 語法",
+      "command": "helm lint ./charts/hysp && kubectl apply --dry-run=client -f k8s/"
+    },
+    "secure-audit": {
+      "desc": "執行國防級資安審計 (GoSec + Bun Audit)",
+      "command": "gosec ./... && bun audit"
+    },
+    "gen-schema": {
+      "desc": "自動根據 Zod 生成 Go Struct 與 PostgreSQL JSONB 結構",
+      "command": "sh scripts/generate_ai_schema.sh"
+    }
+  },
+
+  "prevent_edits": [
+    "internal/security/vault/**",
+    "internal/security/tink/**",
+    "k8s/production/**",
+    "Containerfile",
+    ".claude/**"
+  ],
+
+  "preferred_file_patterns": [
+    "internal/**/*.go",
+    "src/**/*.tsx",
+    "src/schemas/*.ts",
+    "k8s/**/*.yaml",
+    "Containerfile",
+    "package.json"
+  ]
+}
