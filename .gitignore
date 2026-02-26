@@ -1,6 +1,6 @@
-# Sub-repos — managed independently
-hyadmin-api/
-hyadmin-ui/
+# Sub-repos — managed independently (anchored to repo root)
+/hyadmin-api/
+/hyadmin-ui/
 
 # IDE
 .vscode/
