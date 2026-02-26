@@ -2,6 +2,9 @@
 /hyadmin-api/
 /hyadmin-ui/
 
+# Claude Code
+.claude/
+
 # IDE
 .vscode/
 .idea/
