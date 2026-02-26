@@ -1,6 +1,6 @@
 {
   "folders": [
-    { "name": "hysp (workspace)", "path": "." },
+    { "name": "hysp", "path": "." },
     { "name": "hyadmin-api",      "path": "hyadmin-api" },
     { "name": "hyadmin-ui",       "path": "hyadmin-ui" }
   ],
