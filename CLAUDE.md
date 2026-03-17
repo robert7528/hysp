@@ -236,6 +236,43 @@ export NEXT_PUBLIC_API_URL=https://your-domain/hub
 sudo bash /hysp/hyadmin-ui/deployment/deploy.sh
 ```
 
+### hycert — 憑證管理模組
+
+| | hycert-api | hycert-ui |
+|--|------------|-----------|
+| **GitHub** | `robert7528/hycert-api` | `robert7528/hycert-ui` |
+| **本地** | `D:\HySP\hycert-api\` | `D:\HySP\hycert-ui\` |
+| **Linux** | `/hysp/hycert-api/` | `/hysp/hycert-ui/` |
+| **Slug** | `cert` | `cert` |
+| **Port** | 8082 | 3002 |
+| **Nginx** | `/hycert-api/`（trailing slash 剝離前綴） | `/hycert-ui`（不剝離，Next.js basePath） |
+| **Quadlet** | `/etc/containers/systemd/hycert-api.container` | `/etc/containers/systemd/hycert-ui.container` |
+| **Env file** | `/etc/hycert/api.env` | 無（stateless） |
+
+#### hycert-api 重點
+- Go module: `github.com/hysp/hycert-api`
+- DI: `uber-go/fx`；HTTP: Gin；CLI: Cobra
+- **無 DB**：純工具型 API（憑證解析/轉換/驗證）
+- **Auth**：JWT 驗證（共用 hyadmin-api 的 JWT_SECRET）
+- **格式支援**：PEM、DER、PFX/PKCS#12、JKS（keystore-go/v4）、P7B/PKCS#7（smallstep/pkcs7）
+- **鏈驗證**：AIA chasing + AKID/SKID + SystemCertPool
+
+#### hycert-ui 重點
+- Next.js 15 App Router；`basePath: '/hycert-ui'`；`output: 'standalone'`
+- 以 micro-app 掛載於 hyadmin-ui Shell
+- Auth：讀取 hyadmin 的 cookie（`hyadmin_token`），共用同域
+- i18n：獨立 locale（zh-TW/en），讀取 `hyadmin_locale` localStorage
+- **模組註冊**：在 hyadmin 中設定 `route: 'cert'`, `url: 'https://domain/hycert-ui'`, `api_url: '/hycert-api'`
+
+#### 部署
+```bash
+# API
+sudo bash /hysp/hycert-api/deployment/deploy.sh
+
+# UI
+sudo bash /hysp/hycert-ui/deployment/deploy.sh
+```
+
 ## 8. 開發與測試環境
 
 ### 開發環境
