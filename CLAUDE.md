@@ -156,7 +156,7 @@ Gateway 路由規則（Podman Nginx / K8S Ingress 皆適用）：
 - **職責邊界**：不放業務元件、業務翻譯、環境變數、路由邏輯、API endpoint 路徑。
 - **詳細規範**：見 `D:\HySP-Temp\Spec\hysp-ui-kit-claude-spec-v3.md`。
 - **狀態**：待建立（從 hyadmin-ui 抽取）。
-- **演進**：第三個 UI 模組開工時，評估是否升級為 hyviews monorepo。
+- **架構定案**：獨立套件模式（對應 hycore），不採 monorepo。各模組 UI 獨立 repo、獨立部署。
 
 ### 5.9 i18n 多語架構
 
@@ -222,7 +222,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 | **第二階段** | 進行中 | 建立 `hycore`（✅ 已完成 v0.1.0）、建立 `hyui-kit`（進行中）、建立 `hycert` 模組（✅ hycert-api + hycert-ui） |
 | **第三階段** | hyui-kit 穩定後 | 統一 i18n key 命名規範、建 i18n_messages DB schema |
 | **第四階段** | API 穩定後 | 導入 affected-only build、Go → OpenAPI → Zod 自動化 |
-| **第五階段** | 第三個 UI 模組開工 | 評估是否升級 hyui-kit 為 hyviews monorepo |
+| **第五階段** | 多模組穩定運行後 | 導入 SBOM 前端掃描、共用元件視覺測試（Storybook） |
 
 ## 6. 開發工作流
 1. **規劃**: `/plan` 生成設計，包含 Zod Schema 與 Go Struct。
