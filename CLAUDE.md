@@ -315,8 +315,9 @@ sudo bash /hysp/hycert-ui/deployment/deploy.sh
 
 ### 開發環境
 - **作業系統**: Windows 11
-- **語言/Runtime**: Go, Bun
+- **語言/Runtime**: Go 1.26, Bun
 - **IDE**: VSCode (Multi-root Workspace)
+- **CLI 工具**: GitHub CLI (`gh`)——用於查看 CI log（`gh run view --log-failed`）、管理 PR/Issue
 
 ### CI/CD 流程
 ```
