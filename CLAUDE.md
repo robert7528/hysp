@@ -178,14 +178,14 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 ```
 - DB 表：`i18n_messages`（tenant_id + module + locale + key → value）
 - `tenant_id = '__default__'` 為平台預設，各租戶只覆蓋有差異的 key
-- 快取鏈：DB → Redis（Go API 層）→ Next.js unstable_cache（UI 層，TTL 5 分鐘）
+- 快取鏈：DB → Redis（Go API 層）→ UI 層 local cache（TTL 5 分鐘）
 
 #### 演進步驟
 | 步驟 | 時機 | 內容 |
 |--|--|--|
 | **A** | 建 hyui-kit 時 | 統一 key 命名規範，改現有 hyadmin-ui + hycert-ui 翻譯 |
 | **B** | A 完成後 | 建 `i18n_messages` DB schema（預留，不急實作 API） |
-| **C** | 有租戶需要覆蓋翻譯時 | 實作 Go API + Redis cache + Next.js cache 整合 |
+| **C** | 有租戶需要覆蓋翻譯時 | 實作 Go API + Redis cache + UI 層 cache 整合 |
 
 #### 詳細規範
 見 `D:\HySP-Temp\Spec\hysp-ui-kit-claude-spec-v3.md` Section 3.6。
@@ -269,7 +269,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 | **Port** | 8080 | 80 (nginx in container) |
 | **Nginx** | `/hub/`（trailing slash 剝離前綴） | `/hyadmin/`（反向代理到容器 nginx，SPA fallback） |
 | **Quadlet** | `/etc/containers/systemd/hyadmin-api.container` | `/etc/containers/systemd/hyadmin-ui.container` |
-| **Env file** | `/etc/hyadmin/api.env` | build-arg（`NEXT_PUBLIC_*`） |
+| **Env file** | `/etc/hyadmin/api.env` | 無（stateless，靜態檔由 nginx 提供） |
 
 #### hyadmin-api 重點
 - Go module: `github.com/hysp/hyadmin-api`
@@ -307,7 +307,7 @@ sudo bash /hysp/hyadmin-ui/deployment/deploy.sh
 | **Linux** | `/hysp/hycert-api/` | `/hysp/hycert-ui/` |
 | **Slug** | `cert` | `cert` |
 | **Port** | 8082 | 3002 |
-| **Nginx** | `/hycert-api/`（trailing slash 剝離前綴） | `/hycert-ui`（不剝離，Next.js basePath） |
+| **Nginx** | `/hycert-api/`（trailing slash 剝離前綴） | `/hycert-ui`（反向代理到容器 nginx，SPA fallback） |
 | **Quadlet** | `/etc/containers/systemd/hycert-api.container` | `/etc/containers/systemd/hycert-ui.container` |
 | **Env file** | `/etc/hycert/api.env` | 無（stateless） |
 
@@ -320,8 +320,8 @@ sudo bash /hysp/hyadmin-ui/deployment/deploy.sh
 - **鏈驗證**：AIA chasing + AKID/SKID + SystemCertPool
 
 #### hycert-ui 重點
-- Next.js 15 App Router；`basePath: '/hycert-ui'`；`output: 'standalone'`
-- 以 micro-app 掛載於 hyadmin-ui Shell
+- Vite 6 + React；`base: '/hycert-ui/'`
+- 以 wujie-react 掛載於 hyadmin-ui Shell
 - Auth：讀取 hyadmin 的 cookie（`hyadmin_token`），共用同域
 - i18n：獨立 locale（zh-TW/en），讀取 `hyadmin_locale` localStorage
 - **模組註冊**：在 hyadmin 中設定 `route: 'cert'`, `url: 'https://domain/hycert-ui'`, `api_url: '/hycert-api'`

@@ -4,15 +4,15 @@
 
   "build_command": "bun run build",
   "test_command": "bun test && go test ./internal/... -cover",
-  "lint_command": "golangci-lint run ./... && bun x next lint",
+  "lint_command": "golangci-lint run ./...",
 
   "commands": {
     "dev": {
-      "desc": "以 Bun 高性能模式啟動 Next.js 開發服務",
-      "command": "bun --bun next dev"
+      "desc": "以 Vite 啟動前端開發服務",
+      "command": "bun run dev"
     },
     "podman-build": {
-      "desc": "使用 Podman 構建符合 OCI 規範的 Bun 鏡像",
+      "desc": "使用 Podman 構建符合 OCI 規範的鏡像",
       "command": "podman build -t hysp-app:latest -f Containerfile ."
     },
     "podman-up": {
