@@ -140,18 +140,27 @@ iframe 裡的 document    ←→    Shadow DOM 在父應用的 document
 連接兩者需要大量 proxy 工作 → 「縫合怪」
 ```
 
-#### 具體風險
+#### Radix UI 相容性實測結果（2026-03-19）
 
-| 風險 | 嚴重度 | 目前影響 |
-|------|--------|---------|
-| Radix UI Popover/Dialog 跨 document 定位失準 | 高 | 暫無（Select 正常） |
-| wujie 已停止維護 | 中 | 暫無（功能穩定） |
-| 安全漏洞無人修補 | 中 | 暫無 |
+| 元件 | 渲染 | 定位 | 事件 | 結論 | 替代方案 |
+|------|------|------|------|------|---------|
+| Select | ✅ | ✅ | ✅ | 直接用 | — |
+| DropdownMenu | ✅ | ✅ | ✅ | 直接用 | — |
+| Toast (sonner) | ✅ | ✅ | ✅ | 直接用 | — |
+| Dialog | ✅ | ✅ 居中 | ❌ ESC/按鈕異常 | 不能用 | 純 React ConfirmModal |
+| Tooltip | ✅ | ❌ 偏移至左上角 | ✅ | 不能用 | HTML `title` 屬性 |
+| Popover | ✅ | ❌ 偏移至左上角 | ✅ | 不能用 | inline 展開/收合 |
+
+**定位偏移根因**：floating-ui 用 `getBoundingClientRect()` 取 iframe 座標，但元素顯示在 Shadow DOM（差 sidebar 240px + header 56px）。`portal={false}` 無效。
+
+**事件異常根因**：Dialog 的 focus trap + pointer-down-outside 與 wujie 事件代理衝突。
+
+**Select 為什麼正常**：dropdown 用 `align` 相對於 trigger 對齊，不依賴絕對座標。
 
 #### 觸發遷移條件（出現任何一個就換原生 iframe）
-1. Radix UI 元件在子應用內定位失準
-2. wujie 爆出安全漏洞無人修
-3. 需要 3+ 個子應用且有互動需求
+1. wujie 爆出安全漏洞無人修
+2. 需要 5+ 個子應用且有互動需求
+3. 替代方案累積過多，維護成本超過遷移成本
 
 ### 備案：原生 iframe
 
