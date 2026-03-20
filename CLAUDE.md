@@ -275,11 +275,20 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 
 | 階段 | 時機 | 核心任務 |
 |--|--|--|
-| **第一階段** | 完成 | 專注 `hyadmin-api` + `hyadmin-ui` |
-| **第二階段** | 進行中 | 建立 `hycore`（✅ 已完成 v0.1.0）、建立 `hyui-kit`（進行中）、建立 `hycert` 模組（✅ hycert-api + hycert-ui） |
-| **第三階段** | hyui-kit 穩定後 | 統一 i18n key 命名規範、建 i18n_messages DB schema |
-| **第四階段** | API 穩定後 | 導入 affected-only build、Go → OpenAPI → Zod 自動化 |
-| **第五階段** | 多模組穩定運行後 | 導入 SBOM 前端掃描、共用元件視覺測試（Storybook） |
+| **第一階段** | ✅ 完成 | 專注 `hyadmin-api` + `hyadmin-ui` |
+| **第二階段** | ✅ 完成 | 建立 `hycore`（v0.1.2）、建立 `hycert` 模組（hycert-api + hycert-ui 工具箱）、CI 資安掃描（Trivy + govulncheck） |
+| **第三階段** | 進行中 | `hycert` CRUD API + UI（憑證生命週期管理，業務急需）、`hyui-kit` 共用套件抽取 |
+| **第四階段** | 第三階段後 | 抽取 `hysso`（認證從 hyadmin 獨立，實現模組獨立運行） |
+| **第五階段** | hysso 穩定後 | 抽取 `hyiam`（授權從 hyadmin 獨立），hycert 改接 hysso/hyiam |
+| **第六階段** | 基底穩定後 | 統一 i18n key 命名規範、建 i18n_messages DB schema |
+| **第七階段** | API 穩定後 | 導入 affected-only build、Go → OpenAPI → Zod 自動化 |
+| **第八階段** | 多模組穩定運行後 | 導入 SBOM 前端掃描、共用元件視覺測試（Storybook） |
+
+#### 基底模組抽取順序與理由
+目前認證（登入/JWT）和授權（Casbin RBAC）都嵌在 hyadmin-api，導致所有模組依賴 hyadmin 才能運行。抽取順序：
+1. **hysso**（認證）→ 所有模組的地基，抽出後模組可獨立運行
+2. **hyiam**（授權）→ 權限管理獨立，模組不需在 hyadmin seed 裡塞權限資料
+3. 遷移成本低：hycore auth middleware 只驗 token 不管誰簽，換 JWT_SECRET 來源即可
 
 ## 6. 開發工作流
 1. **規劃**: `/plan` 生成設計，包含 Zod Schema 與 Go Struct。
