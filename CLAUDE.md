@@ -411,6 +411,34 @@ sudo bash /hysp/hycert-api/deployment/deploy.sh
 sudo bash /hysp/hycert-ui/deployment/deploy.sh
 ```
 
+### hycert-agent — 憑證部署代理
+
+| | hycert-agent |
+|--|-------------|
+| **GitHub** | `robert7528/hycert-agent` |
+| **本地** | `D:\HySP\hycert-agent\` |
+| **Linux** | `/hysp/hycert-agent/`（原始碼）、`/usr/local/bin/hycert-agent`（binary） |
+| **Config** | `/etc/hycert/agent.yaml` |
+| **Log** | `/var/log/hycert-agent.log` |
+| **Backup** | `/var/lib/hycert-agent/backups/` |
+
+#### 重點
+- Go 獨立 binary（無容器），交叉編譯 linux/amd64 + windows/amd64
+- CLI: Cobra；Config: Viper + YAML；Log: slog
+- 外部依賴僅 Cobra + Viper，其餘全 stdlib
+- **認證**：Agent Token（`Authorization: Bearer hycert_agt_xxx`）
+- **執行模式**：`run`（單次，搭配 cron）、`daemon`（持續輪詢，搭配 systemd）
+- **Phase 1 支援**：nginx、apache（PEM 分開）、haproxy、hyproxy（PEM 合併）
+- **流程**：查詢 deployments → fingerprint 比對 → 下載憑證 → 備份 → 寫檔 → reload → 回報
+- **安全**：key 檔案 `0600`、token 支援 env 覆蓋、私鑰不寫 log
+
+#### 部署
+```bash
+# 在目標主機上
+cd /hysp/hycert-agent && git pull && make build-linux
+sudo bash deployment/deploy.sh
+```
+
 ## 8. 開發與測試環境
 
 ### 開發環境
