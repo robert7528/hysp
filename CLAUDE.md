@@ -219,11 +219,18 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 #### 詳細規範
 見 `D:\HySP-Temp\Spec\hysp-ui-kit-claude-spec-v3.md` Section 3.6。
 
-### 5.10 數據契約
+### 5.10 多主題（色系）切換
+- **機制**：Shadcn/ui CSS 變數 + `data-theme` 屬性切換，不改元件。
+- **明暗模式**：`class="dark"` 獨立控制。
+- **偏好分層**：使用者（localStorage `hyadmin_theme`）> 租戶（hyconf）> 平台預設，與 i18n / hyconf 一致。
+- **子應用同步**：父子同域共用 localStorage，與 locale 同機制。
+- **實作位置**：hyui-kit（CSS 變數 + useTheme hook）→ hyadmin-ui（切換按鈕）→ 各子應用（讀 localStorage）。
+
+### 5.11 數據契約
 - **現階段**：手寫 TypeScript type。
 - **中長期**：Go Struct → OpenAPI spec → Zod schema 自動生成。
 
-### 5.11 術語定義
+### 5.12 術語定義
 
 | 術語 | 意思 | 英文 |
 |--|--|--|
@@ -234,7 +241,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 
 口語簡稱：前台 UI、前台 API、後台 UI、後台 API。
 
-### 5.12 模組開發流程
+### 5.13 模組開發流程
 新增模組時須執行以下步驟：
 1. **功能盤點**：列出所有功能需求
 2. **耦合度分析**：判斷哪些功能一定會一起改動，決定拆成幾個模組
@@ -243,7 +250,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 5. **模組註冊**：向 hyadmin 註冊 slug、顯示名稱、選單（含掛載 hyconf/hyiam/hylog）
 6. **依賴宣告**：宣告依賴的基礎模組（hyconf、hyiam、hylog 等）
 
-### 5.13 微前端架構決策
+### 5.14 微前端架構決策
 
 #### 方案選定：wujie iframe 模式
 - **框架**：`wujie-react`（騰訊無界微前端）
@@ -268,7 +275,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 - 2026-03-18：POC 驗證 micro-app iframe + Next.js（成功但有 SSR 相容問題）
 - 2026-03-18：遷移至 wujie-react + Vite（hycert-ui 先行，hyadmin-ui 隨後）
 
-### 5.14 模組獨立運行與產品組合
+### 5.15 模組獨立運行與產品組合
 
 #### 設計原則
 每個模組都是完整獨立的服務（獨立 Repo、CI/CD、容器、DB），可以脫離 hyadmin Shell 獨立運行。
@@ -287,7 +294,7 @@ Layer 2：DB 租戶覆蓋        ← 管理員手動設定，優先級最高
 - 業務模組只驗 token（透過 hycore auth middleware）
 - 組合方式：**hysso + 任意業務模組 = 獨立產品**
 
-### 5.15 演進路線圖
+### 5.16 演進路線圖
 
 | 階段 | 時機 | 核心任務 |
 |--|--|--|
