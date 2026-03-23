@@ -345,7 +345,7 @@ Nginx 路由規則（Podman Nginx / K8S Ingress 皆適用）：
 | **本地** | `D:\HySP\hyadmin-api\` | `D:\HySP\hyadmin-ui\` |
 | **Linux** | `/hysp/hyadmin-api/` | `/hysp/hyadmin-ui/` |
 | **Slug** | `hyadmin` | `hyadmin` |
-| **Port** | 8080 | 80 (nginx in container) |
+| **Port** | 8081 (host) | 5001 (host) → 80 (container nginx) |
 | **Nginx** | `/hyadmin-api/`（trailing slash 剝離前綴） | `/hyadmin/`（反向代理到容器 nginx，SPA fallback） |
 | **Quadlet** | `/etc/containers/systemd/hyadmin-api.container` | `/etc/containers/systemd/hyadmin-ui.container` |
 | **Env file** | `/etc/hyadmin/api.env` | 無（stateless，靜態檔由 nginx 提供） |
@@ -385,7 +385,7 @@ sudo bash /hysp/hyadmin-ui/deployment/deploy.sh
 | **本地** | `D:\HySP\hycert-api\` | `D:\HySP\hycert-ui\` |
 | **Linux** | `/hysp/hycert-api/` | `/hysp/hycert-ui/` |
 | **Slug** | `hycert` | `hycert` |
-| **Port** | 8082 | 3002 |
+| **Port** | 8082 | 5002 (host) → 80 (container nginx) |
 | **Nginx** | `/hycert-api/`（trailing slash 剝離前綴） | `/hycert-ui`（反向代理到容器 nginx，SPA fallback） |
 | **Quadlet** | `/etc/containers/systemd/hycert-api.container` | `/etc/containers/systemd/hycert-ui.container` |
 | **Env file** | `/etc/hycert/api.env` | 無（stateless） |
